@@ -1,3 +1,6 @@
+# Description
+React/Axios/Element UI/ECharts/Tailwind CSS/Fetch/TypeScript/Ant Design/Material UI/Vite/Sass/CSS Modules
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
