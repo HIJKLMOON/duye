@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Table, Button, Space, Modal, Form, Input, Select, message, Popconfirm } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons';
-import type { Role } from '../types';
+import { Table, Button, Space, Form, Input, Select, message, Popconfirm } from 'antd';
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import type { Role } from '../../types';
+import { SearchBar, StatusBadge } from '../../components/common';
+import { ActionModal } from '../../components/form';
 
 const RoleManage: React.FC = () => {
   const [dataSource, setDataSource] = useState<Role[]>([]);
@@ -14,6 +16,22 @@ const RoleManage: React.FC = () => {
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const headerContent = (
+      <SearchBar
+        value={searchText}
+        onChange={setSearchText}
+        placeholder="搜索角色名/描述"
+        onAdd={() => handleAdd()}
+        onRefresh={() => fetchData()}
+      />
+    );
+    (window as any).__headerExtra = headerContent;
+    return () => {
+      (window as any).__headerExtra = null;
+    };
+  }, [searchText]);
 
   const fetchData = () => {
     setLoading(true);
@@ -49,16 +67,11 @@ const RoleManage: React.FC = () => {
     try {
       const values = await form.validateFields();
       if (modalTitle === '新增角色') {
-        const newRole: Role = {
-          id: Date.now().toString(),
-          ...values,
-        };
+        const newRole: Role = { id: Date.now().toString(), ...values };
         setDataSource([...dataSource, newRole]);
         message.success('新增成功');
       } else {
-        setDataSource(
-          dataSource.map((item) => (item.id === values.id ? { ...item, ...values } : item))
-        );
+        setDataSource(dataSource.map((item) => (item.id === values.id ? { ...item, ...values } : item)));
         message.success('编辑成功');
       }
       setModalVisible(false);
@@ -68,27 +81,19 @@ const RoleManage: React.FC = () => {
   };
 
   const columns = [
-    {
-      title: '角色名称',
-      dataIndex: 'name',
-      key: 'name',
-    },
-    {
-      title: '描述',
-      dataIndex: 'description',
-      key: 'description',
-    },
+    { title: '角色名称', dataIndex: 'name', key: 'name' },
+    { title: '描述', dataIndex: 'description', key: 'description' },
     {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
-      render: (status: number) => (status === 1 ? '正常' : '禁用'),
+      render: (status: number) => <StatusBadge status={status} />,
     },
     {
       title: '操作',
       key: 'action',
       width: 180,
-      render: (_: any, record: Role) => (
+      render: (_: unknown, record: Role) => (
         <Space>
           <Button type="link" size="small" icon={<EditOutlined />} onClick={() => handleEdit(record)}>
             编辑
@@ -104,39 +109,24 @@ const RoleManage: React.FC = () => {
   ];
 
   const filteredData = searchText
-    ? dataSource.filter(
-        (item) =>
-          item.name?.includes(searchText) || item.description?.includes(searchText)
-      )
+    ? dataSource.filter((item) => item.name?.includes(searchText) || item.description?.includes(searchText))
     : dataSource;
 
+  const headerContent = (
+    <SearchBar
+      value={searchText}
+      onChange={setSearchText}
+      placeholder="搜索角色名/描述"
+      onAdd={handleAdd}
+      onRefresh={fetchData}
+    />
+  );
+  (window as any).__headerExtra = headerContent;
+
   return (
-    <div className="space-y-4">
-      <div className="bg-white p-4 rounded-lg">
-        <Space className="mb-4">
-          <Input
-            placeholder="搜索角色名/描述"
-            prefix={<SearchOutlined />}
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            className="w-64"
-          />
-          <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
-            新增
-          </Button>
-          <Button icon={<SearchOutlined />} onClick={fetchData}>
-            刷新
-          </Button>
-        </Space>
-        <Table columns={columns} dataSource={filteredData} loading={loading} rowKey="id" />
-      </div>
-      <Modal
-        title={modalTitle}
-        open={modalVisible}
-        onOk={handleSubmit}
-        onCancel={() => setModalVisible(false)}
-        width={600}
-      >
+    <div className="bg-white p-4 rounded-lg">
+      <Table columns={columns} dataSource={filteredData} loading={loading} rowKey="id" />
+      <ActionModal open={modalVisible} title={modalTitle} onCancel={() => setModalVisible(false)} onOk={handleSubmit}>
         <Form form={form} layout="vertical">
           <Form.Item name="name" label="角色名称" rules={[{ required: true }]}>
             <Input />
@@ -151,7 +141,7 @@ const RoleManage: React.FC = () => {
             </Select>
           </Form.Item>
         </Form>
-      </Modal>
+      </ActionModal>
     </div>
   );
 };

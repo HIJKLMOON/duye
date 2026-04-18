@@ -4,7 +4,9 @@ import { UserOutlined, TeamOutlined, FileTextOutlined, RiseOutlined } from '@ant
 import ReactECharts from 'echarts-for-react';
 
 const Dashboard: React.FC = () => {
-  useEffect(() => {}, []);
+  useEffect(() => {
+    (window as any).__headerExtra = null;
+  }, []);
 
   const lineChartOption = {
     tooltip: {

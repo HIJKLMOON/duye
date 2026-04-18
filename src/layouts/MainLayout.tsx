@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { Layout, Menu, Avatar, Dropdown, Spin } from 'antd';
+import { Layout, Menu, Avatar, Button, Dropdown, Spin } from 'antd';
 import {
   DashboardOutlined,
   UserOutlined,
@@ -10,20 +10,20 @@ import {
   LogoutOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  DashboardFilled,
 } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '../hooks/useAuth';
 import { setCollapsed, setSelectedKeys, setOpenKeys, setMenuList } from '../store/slices/menuSlice';
-import { logout } from '../store/slices/authSlice';
 import type { MenuItem } from '../types';
 
 const { Sider, Header, Content } = Layout;
 
-const iconMap: Record<string, any> = {
-  DashboardOutlined,
-  UserOutlined,
-  TeamOutlined,
-  MenuOutlined,
-  SettingOutlined,
+const iconMap: Record<string, React.FC<any>> = {
+  DashboardOutlined: DashboardOutlined as any,
+  UserOutlined: UserOutlined as any,
+  TeamOutlined: TeamOutlined as any,
+  MenuOutlined: MenuOutlined as any,
+  SettingOutlined: SettingOutlined as any,
 };
 
 const MainLayout: React.FC = () => {
@@ -33,6 +33,7 @@ const MainLayout: React.FC = () => {
   const { user, menus, token } = useAppSelector((state) => state.auth);
   const { collapsed, selectedKeys, openKeys, menuList } = useAppSelector((state) => state.menu);
   const [loading, setLoading] = useState(true);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   useEffect(() => {
     if (token && menus.length === 0) {
@@ -72,67 +73,15 @@ const MainLayout: React.FC = () => {
   };
 
   const handleLogout = () => {
-    dispatch(logout());
-    navigate('/login');
-  };
-
-  const userMenu = {
-    items: [
-      {
-        key: 'profile',
-        icon: <UserOutlined />,
-        label: '个人中心',
-        onClick: () => navigate('/profile'),
-      },
-      {
-        key: 'settings',
-        icon: <SettingOutlined />,
-        label: '系统设置',
-        onClick: () => navigate('/settings'),
-      },
-      {
-        type: 'divider' as const,
-      },
-      {
-        key: 'logout',
-        icon: <LogoutOutlined />,
-        label: '退出登录',
-        onClick: handleLogout,
-      },
-    ],
+    localStorage.removeItem('token');
+    window.location.href = '/login';
   };
 
   const defaultMenus: MenuItem[] = [
-    {
-      id: '1',
-      name: '首页',
-      path: '/dashboard',
-      icon: 'DashboardOutlined',
-    },
-    {
-      id: '2',
-      name: '用户管理',
-      path: '/user',
-      icon: 'UserOutlined',
-    },
-    {
-      id: '3',
-      name: '角色管理',
-      path: '/role',
-      icon: 'TeamOutlined',
-    },
-    {
-      id: '4',
-      name: '菜单管理',
-      path: '/menu',
-      icon: 'MenuOutlined',
-    },
-    {
-      id: '5',
-      name: '系统设置',
-      path: '/settings',
-      icon: 'SettingOutlined',
-    },
+    { id: '1', name: '首页', path: '/dashboard', icon: 'DashboardOutlined' },
+    { id: '2', name: '用户管理', path: '/user', icon: 'UserOutlined' },
+    { id: '3', name: '角色管理', path: '/role', icon: 'TeamOutlined' },
+    { id: '4', name: '菜单管理', path: '/menu', icon: 'MenuOutlined' },
   ];
 
   const displayMenus = menuList.length > 0 ? menuList : defaultMenus;
@@ -158,57 +107,112 @@ const MainLayout: React.FC = () => {
   }
 
   return (
-    <Layout className="min-h-screen">
-      <Sider
-        width={240}
-        collapsedWidth={80}
-        collapsed={collapsed}
-        className="bg-white shadow-md"
-        style={{ position: 'fixed', left: 0, top: 0, bottom: 0, zIndex: 100 }}
-      >
-        <div className="h-16 flex items-center justify-center border-b border-gray-200">
-          {collapsed ? (
-            <span className="text-xl font-bold text-primary-600">D</span>
-          ) : (
-            <span className="text-xl font-bold text-primary-600">Duye Admin</span>
-          )}
-        </div>
-        <Menu
-          mode="inline"
-          selectedKeys={selectedKeys}
-          openKeys={openKeys}
-          onClick={handleMenuClick}
-          onOpenChange={handleOpenChange}
-          items={renderMenuItems(displayMenus)}
-          className="border-none h-[calc(100vh-64px)]"
-        />
-        <div className="absolute bottom-0 w-full border-t border-gray-200">
-          <Dropdown
-            menu={userMenu}
-            placement="topLeft"
-            trigger={['click']}
-          >
-            <div className="h-16 flex items-center px-4 cursor-pointer hover:bg-gray-50">
-              <Avatar src={user?.avatar} icon={!user?.avatar && <UserOutlined />} />
-              {!collapsed && (
-                <span className="ml-3 text-sm">{user?.nickname || user?.username || '管理员'}</span>
-              )}
+    <Layout className="h-screen flex flex-col overflow-hidden">
+      <Header className="bg-white shadow-sm flex items-center px-4 h-14 flex-shrink-0" style={{ zIndex: 100 }}>
+        <div className={`flex items-center ${collapsed ? 'w-20 -ml-4 pl-4' : 'w-60 -ml-4 pl-4'} transition-all`}>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 flex items-center justify-center bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg">
+              <DashboardFilled className="text-white text-lg" />
             </div>
-          </Dropdown>
-        </div>
-      </Sider>
-      <Layout style={{ marginLeft: collapsed ? 80 : 240, transition: 'margin-left 0.2s' }}>
-        <Header className="bg-white shadow-sm px-6 flex items-center justify-between" style={{ position: 'sticky', top: 0, zIndex: 99 }}>
-          <div className="flex items-center">
-            <button onClick={toggleCollapsed} className="text-xl">
-              {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            </button>
+            {!collapsed && (
+              <div className="flex flex-col">
+                <span className="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent leading-none">
+                  Duye
+                </span>
+                <span className="text-xs text-gray-400">管理平台</span>
+              </div>
+            )}
           </div>
-          <Dropdown menu={userMenu}>
-            <Avatar src={user?.avatar} icon={!user?.avatar && <UserOutlined />} className="cursor-pointer" />
-          </Dropdown>
-        </Header>
-        <Content className="p-6 overflow-auto" style={{ minHeight: 'calc(100vh - 64px)' }}>
+          <Button
+            type="text"
+            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+            onClick={toggleCollapsed}
+            className="text-lg ml-auto"
+          />
+        </div>
+        <div className="flex items-center h-full ml-auto">
+          {(window as any).__headerExtra}
+        </div>
+      </Header>
+      <Layout className="flex-1 flex flex-row overflow-hidden">
+        <Sider
+          width={240}
+          collapsedWidth={80}
+          collapsed={collapsed}
+          className="bg-white shadow-md flex flex-col overflow-hidden"
+          style={{ height: 'calc(100vh - 56px)', position: 'relative' }}
+        >
+          <Menu
+            mode="inline"
+            selectedKeys={selectedKeys}
+            openKeys={openKeys}
+            onClick={handleMenuClick}
+            onOpenChange={handleOpenChange}
+            items={renderMenuItems(displayMenus)}
+            className="border-none flex-1 overflow-auto pb-14"
+          />
+          <div className="border-t border-gray-200 absolute bottom-0 w-full bg-white">
+            <Dropdown
+              open={userMenuOpen}
+              onOpenChange={setUserMenuOpen}
+              dropdownRender={() => (
+                <div className="bg-white rounded-lg shadow-lg py-2 min-w-[160px]">
+                  <div
+                    className="px-4 py-2 hover:bg-gray-50 cursor-pointer flex items-center gap-2"
+                    onClick={() => {
+                      navigate('/profile');
+                      setUserMenuOpen(false);
+                    }}
+                  >
+                    <UserOutlined />
+                    <span>个人中心</span>
+                  </div>
+                  <div
+                    className="px-4 py-2 hover:bg-gray-50 cursor-pointer flex items-center gap-2"
+                    onClick={() => {
+                      navigate('/settings');
+                      setUserMenuOpen(false);
+                    }}
+                  >
+                    <SettingOutlined />
+                    <span>系统设置</span>
+                  </div>
+                  <div
+                    className="px-4 py-2 hover:bg-gray-50 cursor-pointer flex items-center gap-2"
+                    onClick={() => {
+                      navigate('/notifications');
+                      setUserMenuOpen(false);
+                    }}
+                  >
+                    <DashboardOutlined />
+                    <span>用户通知</span>
+                  </div>
+                  <div className="border-t border-gray-200 my-1" />
+                  <div
+                    className="px-4 py-2 hover:bg-gray-50 cursor-pointer flex items-center gap-2 text-red-500"
+                    onClick={handleLogout}
+                  >
+                    <LogoutOutlined />
+                    <span>退出登录</span>
+                  </div>
+                </div>
+              )}
+              trigger={['click']}
+              placement="top"
+            >
+              <div className={`h-14 flex items-center px-4 cursor-pointer hover:bg-gray-50 ${collapsed ? 'justify-center' : ''}`}>
+                <Avatar src={user?.avatar} icon={!user?.avatar && <UserOutlined />} />
+                {!collapsed && (
+                  <div className="ml-3 flex flex-col">
+                    <span className="text-sm">{user?.nickname || user?.username || '管理员'}</span>
+                    <span className="text-xs text-gray-400">点击展开</span>
+                  </div>
+                )}
+              </div>
+            </Dropdown>
+          </div>
+        </Sider>
+        <Content className="p-6 overflow-auto flex-1 bg-gray-50">
           <Outlet />
         </Content>
       </Layout>

@@ -7,8 +7,19 @@ export interface User {
   phone?: string;
   roleIds?: string[];
   status?: number;
+  onlineStatus?: 'online' | 'offline';
   createTime?: string;
   updateTime?: string;
+}
+
+export interface Notification {
+  id: string;
+  userId?: string;
+  type: 'status' | 'message' | 'request' | 'system';
+  title: string;
+  content: string;
+  read?: boolean;
+  createTime?: string;
 }
 
 export interface Role {

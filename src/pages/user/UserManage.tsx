@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Table, Button, Space, Modal, Form, Input, Select, message, Popconfirm } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons';
-import type { User } from '../types';
+import { Table, Button, Form, Input, Select, message, Popconfirm } from 'antd';
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import type { User } from '../../types';
+import { SearchBar, StatusBadge } from '../../components/common';
+import { ActionModal } from '../../components/form';
 
 const UserManage: React.FC = () => {
   const [dataSource, setDataSource] = useState<User[]>([]);
@@ -14,6 +16,22 @@ const UserManage: React.FC = () => {
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const headerContent = (
+      <SearchBar
+        value={searchText}
+        onChange={setSearchText}
+        placeholder="搜索用户名/昵称"
+        onAdd={() => handleAdd()}
+        onRefresh={() => fetchData()}
+      />
+    );
+    (window as any).__headerExtra = headerContent;
+    return () => {
+      (window as any).__headerExtra = null;
+    };
+  }, [searchText]);
 
   const fetchData = () => {
     setLoading(true);
@@ -49,16 +67,11 @@ const UserManage: React.FC = () => {
     try {
       const values = await form.validateFields();
       if (modalTitle === '新增用户') {
-        const newUser: User = {
-          id: Date.now().toString(),
-          ...values,
-        };
+        const newUser: User = { id: Date.now().toString(), ...values };
         setDataSource([...dataSource, newUser]);
         message.success('新增成功');
       } else {
-        setDataSource(
-          dataSource.map((item) => (item.id === values.id ? { ...item, ...values } : item))
-        );
+        setDataSource(dataSource.map((item) => (item.id === values.id ? { ...item, ...values } : item)));
         message.success('编辑成功');
       }
       setModalVisible(false);
@@ -68,33 +81,21 @@ const UserManage: React.FC = () => {
   };
 
   const columns = [
-    {
-      title: '用户名',
-      dataIndex: 'username',
-      key: 'username',
-    },
-    {
-      title: '昵称',
-      dataIndex: 'nickname',
-      key: 'nickname',
-    },
-    {
-      title: '邮箱',
-      dataIndex: 'email',
-      key: 'email',
-    },
+    { title: '用户名', dataIndex: 'username', key: 'username' },
+    { title: '昵称', dataIndex: 'nickname', key: 'nickname' },
+    { title: '邮箱', dataIndex: 'email', key: 'email' },
     {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
-      render: (status: number) => (status === 1 ? '正常' : '禁用'),
+      render: (status: number) => <StatusBadge status={status} trueText="正常" falseText="禁用" />,
     },
     {
       title: '操作',
       key: 'action',
       width: 180,
-      render: (_: any, record: User) => (
-        <Space>
+      render: (_: unknown, record: User) => (
+        <div className="flex gap-2">
           <Button type="link" size="small" icon={<EditOutlined />} onClick={() => handleEdit(record)}>
             编辑
           </Button>
@@ -103,45 +104,30 @@ const UserManage: React.FC = () => {
               删除
             </Button>
           </Popconfirm>
-        </Space>
+        </div>
       ),
     },
   ];
 
   const filteredData = searchText
-    ? dataSource.filter(
-        (item) =>
-          item.username?.includes(searchText) || item.nickname?.includes(searchText)
-      )
+    ? dataSource.filter((item) => item.username?.includes(searchText) || item.nickname?.includes(searchText))
     : dataSource;
 
+  const headerContent = (
+    <SearchBar
+      value={searchText}
+      onChange={setSearchText}
+      placeholder="搜��用户名/昵称"
+      onAdd={handleAdd}
+      onRefresh={fetchData}
+    />
+  );
+  (window as any).__headerExtra = headerContent;
+
   return (
-    <div className="space-y-4">
-      <div className="bg-white p-4 rounded-lg">
-        <Space className="mb-4">
-          <Input
-            placeholder="搜索用户���/昵称"
-            prefix={<SearchOutlined />}
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            className="w-64"
-          />
-          <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
-            新增
-          </Button>
-          <Button icon={<SearchOutlined />} onClick={fetchData}>
-            刷新
-          </Button>
-        </Space>
-        <Table columns={columns} dataSource={filteredData} loading={loading} rowKey="id" />
-      </div>
-      <Modal
-        title={modalTitle}
-        open={modalVisible}
-        onOk={handleSubmit}
-        onCancel={() => setModalVisible(false)}
-        width={600}
-      >
+    <div className="bg-white p-4 rounded-lg">
+      <Table columns={columns} dataSource={filteredData} loading={loading} rowKey="id" />
+      <ActionModal open={modalVisible} title={modalTitle} onCancel={() => setModalVisible(false)} onOk={handleSubmit}>
         <Form form={form} layout="vertical">
           <Form.Item name="username" label="用户名" rules={[{ required: true }]}>
             <Input />
@@ -159,7 +145,7 @@ const UserManage: React.FC = () => {
             </Select>
           </Form.Item>
         </Form>
-      </Modal>
+      </ActionModal>
     </div>
   );
 };

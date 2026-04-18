@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Table, Button, Space, Modal, Form, Input, message, Popconfirm } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import type { MenuItem } from '../types';
+import { Table, Button, Form, Input, Popconfirm, message } from 'antd';
+import { PlusOutlined, EditOutlined, DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
+import type { MenuItem } from '../../types';
+import { ActionModal } from '../../components/form';
 
 const MenuManage: React.FC = () => {
   const [dataSource, setDataSource] = useState<MenuItem[]>([]);
@@ -12,6 +13,23 @@ const MenuManage: React.FC = () => {
 
   useEffect(() => {
     fetchData();
+  }, []);
+
+  useEffect(() => {
+    const headerContent = (
+      <div className="flex items-center gap-3">
+        <Button type="primary" icon={<PlusOutlined />} onClick={() => handleAdd()}>
+          新增
+        </Button>
+        <Button icon={<ReloadOutlined />} onClick={() => fetchData()}>
+          刷新
+        </Button>
+      </div>
+    );
+    (window as any).__headerExtra = headerContent;
+    return () => {
+      (window as any).__headerExtra = null;
+    };
   }, []);
 
   const fetchData = () => {
@@ -50,16 +68,11 @@ const MenuManage: React.FC = () => {
     try {
       const values = await form.validateFields();
       if (modalTitle === '新增菜单') {
-        const newMenu: MenuItem = {
-          id: Date.now().toString(),
-          ...values,
-        };
+        const newMenu: MenuItem = { id: Date.now().toString(), ...values };
         setDataSource([...dataSource, newMenu]);
         message.success('新增成功');
       } else {
-        setDataSource(
-          dataSource.map((item) => (item.id === values.id ? { ...item, ...values } : item))
-        );
+        setDataSource(dataSource.map((item) => (item.id === values.id ? { ...item, ...values } : item)));
         message.success('编辑成功');
       }
       setModalVisible(false);
@@ -77,8 +90,8 @@ const MenuManage: React.FC = () => {
       title: '操作',
       key: 'action',
       width: 150,
-      render: (_: any, record: MenuItem) => (
-        <Space>
+      render: (_: unknown, record: MenuItem) => (
+        <div className="flex gap-2">
           <Button type="link" size="small" icon={<EditOutlined />} onClick={() => handleEdit(record)}>
             编辑
           </Button>
@@ -87,23 +100,15 @@ const MenuManage: React.FC = () => {
               删除
             </Button>
           </Popconfirm>
-        </Space>
+        </div>
       ),
     },
   ];
 
   return (
-    <div className="space-y-4">
-      <div className="bg-white p-4 rounded-lg">
-        <Space className="mb-4">
-          <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
-            新增
-          </Button>
-          <Button onClick={fetchData}>刷新</Button>
-        </Space>
-        <Table columns={columns} dataSource={dataSource} loading={loading} rowKey="id" />
-      </div>
-      <Modal title={modalTitle} open={modalVisible} onOk={handleSubmit} onCancel={() => setModalVisible(false)} width={600}>
+    <div className="bg-white p-4 rounded-lg">
+      <Table columns={columns} dataSource={dataSource} loading={loading} rowKey="id" />
+      <ActionModal open={modalVisible} title={modalTitle} onCancel={() => setModalVisible(false)} onOk={handleSubmit}>
         <Form form={form} layout="vertical">
           <Form.Item name="name" label="菜单名称" rules={[{ required: true }]}>
             <Input />
@@ -118,7 +123,7 @@ const MenuManage: React.FC = () => {
             <Input type="number" />
           </Form.Item>
         </Form>
-      </Modal>
+      </ActionModal>
     </div>
   );
 };

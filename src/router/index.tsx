@@ -1,15 +1,19 @@
-import { lazy, Suspense } from 'react';
-import { createBrowserRouter, Navigate } from 'react-router-dom';
-import { Spin } from 'antd';
-import MainLayout from '../layouts/MainLayout';
-import AuthLayout from '../layouts/AuthLayout';
-import Login from '../pages/Login';
+import { lazy, Suspense } from "react";
+import { createBrowserRouter, Navigate } from "react-router-dom";
+import { Spin } from "antd";
+import MainLayout from "../layouts/MainLayout";
+import AuthLayout from "../layouts/AuthLayout";
 
-const Dashboard = lazy(() => import('../pages/Dashboard'));
-const UserManage = lazy(() => import('../pages/UserManage'));
-const RoleManage = lazy(() => import('../pages/RoleManage'));
-const MenuManage = lazy(() => import('../pages/MenuManage'));
-const Settings = lazy(() => import('../pages/Settings'));
+const Login = lazy(() => import("../pages/auth/Login"));
+const Dashboard = lazy(() => import("../pages/dashboard/Dashboard"));
+const UserManage = lazy(() => import("../pages/user/UserManage"));
+const RoleManage = lazy(() => import("../pages/role/RoleManage"));
+const MenuManage = lazy(() => import("../pages/menu/MenuManage"));
+const Settings = lazy(() => import("../pages/settings/Settings"));
+const Profile = lazy(() => import("../pages/profile/Profile"));
+const Notifications = lazy(
+  () => import("../pages/notifications/Notifications"),
+);
 
 const Loading = () => (
   <div className="flex items-center justify-center h-screen">
@@ -19,11 +23,11 @@ const Loading = () => (
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: <Navigate to="/dashboard" replace />,
   },
   {
-    path: '/login',
+    path: "/login",
     element: <AuthLayout />,
     children: [
       {
@@ -33,7 +37,7 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: '/',
+    path: "/",
     element: <MainLayout />,
     children: [
       {
@@ -41,7 +45,7 @@ const router = createBrowserRouter([
         element: <Navigate to="/dashboard" replace />,
       },
       {
-        path: 'dashboard',
+        path: "dashboard",
         element: (
           <Suspense fallback={<Loading />}>
             <Dashboard />
@@ -49,7 +53,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: 'user',
+        path: "user",
         element: (
           <Suspense fallback={<Loading />}>
             <UserManage />
@@ -57,7 +61,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: 'role',
+        path: "role",
         element: (
           <Suspense fallback={<Loading />}>
             <RoleManage />
@@ -65,7 +69,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: 'menu',
+        path: "menu",
         element: (
           <Suspense fallback={<Loading />}>
             <MenuManage />
@@ -73,17 +77,33 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: 'settings',
+        path: "settings",
         element: (
           <Suspense fallback={<Loading />}>
             <Settings />
           </Suspense>
         ),
       },
+      {
+        path: "profile",
+        element: (
+          <Suspense fallback={<Loading />}>
+            <Profile />
+          </Suspense>
+        ),
+      },
+      {
+        path: "notifications",
+        element: (
+          <Suspense fallback={<Loading />}>
+            <Notifications />
+          </Suspense>
+        ),
+      },
     ],
   },
   {
-    path: '*',
+    path: "*",
     element: <Navigate to="/dashboard" replace />,
   },
 ]);

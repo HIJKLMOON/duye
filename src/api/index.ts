@@ -1,6 +1,6 @@
 import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios';
 import { message, Modal } from 'antd';
-import type { ApiResponse, LoginForm, LoginResponse, MenuItem } from '../types';
+import type { ApiResponse } from '../types';
 import { logout } from '../store/slices/authSlice';
 import { store } from '../store';
 
@@ -92,34 +92,10 @@ export const request = {
   },
 };
 
-export const authApi = {
-  login: (data: LoginForm) => request.post<LoginResponse>('/auth/login', data),
-  logout: () => request.post('/auth/logout'),
-  getUserInfo: () => request.get<{ user: any; menus: MenuItem[]; permissions: string[] }>('/auth/userInfo'),
-};
-
-export const userApi = {
-  list: (params?: any) => request.get('/user/list', { params }),
-  add: (data: any) => request.post('/user', data),
-  update: (data: any) => request.put('/user', data),
-  delete: (id: string) => request.delete(`/user/${id}`),
-  detail: (id: string) => request.get(`/user/${id}`),
-};
-
-export const roleApi = {
-  list: (params?: any) => request.get('/role/list', { params }),
-  add: (data: any) => request.post('/role', data),
-  update: (data: any) => request.put('/role', data),
-  delete: (id: string) => request.delete(`/role/${id}`),
-  detail: (id: string) => request.get(`/role/${id}`),
-};
-
-export const menuApi = {
-  list: (params?: any) => request.get('/menu/list', { params }),
-  add: (data: any) => request.post('/menu', data),
-  update: (data: any) => request.put('/menu', data),
-  delete: (id: string) => request.delete(`/menu/${id}`),
-  detail: (id: string) => request.get(`/menu/${id}`),
-};
+export { authApi } from './modules/auth';
+export { userApi } from './modules/user';
+export { roleApi } from './modules/role';
+export { menuApi } from './modules/menu';
+export { notificationApi } from './modules/notification';
 
 export default axiosInstance;

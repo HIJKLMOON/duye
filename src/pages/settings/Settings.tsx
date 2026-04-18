@@ -1,9 +1,13 @@
 import { Card, Form, Input, Switch, Button, message } from 'antd';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const Settings: React.FC = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    (window as any).__headerExtra = null;
+  }, []);
 
   const handleSubmit = async () => {
     try {
