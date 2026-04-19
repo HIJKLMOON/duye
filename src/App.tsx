@@ -1,10 +1,10 @@
-import { Provider } from 'react-redux';
-import { RouterProvider } from 'react-router-dom';
-import { ConfigProvider } from 'antd';
-import zhCN from 'antd/locale/zh_CN';
-import { store } from './store';
-import router from './router';
-import './index.css';
+import { Provider } from "react-redux";
+import { RouterProvider } from "react-router-dom";
+import { ConfigProvider } from "antd";
+import zhCN from "antd/locale/zh_CN";
+import { store } from "./store";
+import router from "./router";
+import "./index.css";
 
 const App: React.FC = () => {
   return (

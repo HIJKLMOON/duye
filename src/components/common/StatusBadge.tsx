@@ -1,4 +1,4 @@
-import { Badge } from 'antd';
+import { Badge } from "antd";
 
 interface StatusBadgeProps {
   status: number;
@@ -8,12 +8,12 @@ interface StatusBadgeProps {
 
 const StatusBadge: React.FC<StatusBadgeProps> = ({
   status,
-  trueText = '正常',
-  falseText = '禁用',
+  trueText = "正常",
+  falseText = "禁用",
 }) => {
   return (
     <Badge
-      status={status === 1 ? 'success' : 'default'}
+      status={status === 1 ? "success" : "default"}
       text={status === 1 ? trueText : falseText}
     />
   );

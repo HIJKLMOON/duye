@@ -1,11 +1,16 @@
-import { useState, useEffect, useMemo } from 'react';
-import { Card, List, Badge, Button, Tabs } from 'antd';
-import { BellOutlined, UserOutlined, MessageOutlined, CheckCircleOutlined } from '@ant-design/icons';
-import type { Notification } from '../../types';
+import { useState, useEffect, useMemo } from "react";
+import { Card, List, Badge, Button, Tabs } from "antd";
+import {
+  BellOutlined,
+  UserOutlined,
+  MessageOutlined,
+  CheckCircleOutlined,
+} from "@ant-design/icons";
+import type { Notification } from "../../types";
 
 const Notifications: React.FC = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [activeTab, setActiveTab] = useState('all');
+  const [activeTab, setActiveTab] = useState("all");
 
   useEffect(() => {
     (window as any).__headerExtra = null;
@@ -18,34 +23,34 @@ const Notifications: React.FC = () => {
   const fetchNotifications = () => {
     const mockData: Notification[] = [
       {
-        id: '1',
-        type: 'status',
-        title: '用户状态变更',
-        content: '用户 zhangsan 已上线',
+        id: "1",
+        type: "status",
+        title: "用户状态变更",
+        content: "用户 zhangsan 已上线",
         read: false,
         createTime: new Date().toISOString(),
       },
       {
-        id: '2',
-        type: 'message',
-        title: '新消息',
-        content: '您有一条新消息来自管理员',
+        id: "2",
+        type: "message",
+        title: "新消息",
+        content: "您有一条新消息来自管理员",
         read: false,
         createTime: new Date().toISOString(),
       },
       {
-        id: '3',
-        type: 'request',
-        title: '新请求',
-        content: '用户 lisi 申请加入项目',
+        id: "3",
+        type: "request",
+        title: "新请求",
+        content: "用户 lisi 申请加入项目",
         read: true,
         createTime: new Date().toISOString(),
       },
       {
-        id: '4',
-        type: 'system',
-        title: '系统通知',
-        content: '系统将在今晚22:00进行维护',
+        id: "4",
+        type: "system",
+        title: "系统通知",
+        content: "系统将在今晚22:00进行维护",
         read: false,
         createTime: new Date().toISOString(),
       },
@@ -58,10 +63,10 @@ const Notifications: React.FC = () => {
   }, [notifications]);
 
   const filteredNotifications = useMemo(() => {
-    if (activeTab === 'all') {
+    if (activeTab === "all") {
       return notifications;
     }
-    if (activeTab === 'unread') {
+    if (activeTab === "unread") {
       return notifications.filter((n) => !n.read);
     }
     return notifications.filter((n) => n.type === activeTab);
@@ -69,7 +74,7 @@ const Notifications: React.FC = () => {
 
   const handleRead = (id: string) => {
     setNotifications(
-      notifications.map((n) => (n.id === id ? { ...n, read: true } : n))
+      notifications.map((n) => (n.id === id ? { ...n, read: true } : n)),
     );
   };
 
@@ -79,20 +84,20 @@ const Notifications: React.FC = () => {
 
   const getIcon = (type: string) => {
     switch (type) {
-      case 'status':
-        return <UserOutlined style={{ color: '#52c41a' }} />;
-      case 'message':
-        return <MessageOutlined style={{ color: '#1890ff' }} />;
-      case 'request':
-        return <CheckCircleOutlined style={{ color: '#faad14' }} />;
+      case "status":
+        return <UserOutlined style={{ color: "#52c41a" }} />;
+      case "message":
+        return <MessageOutlined style={{ color: "#1890ff" }} />;
+      case "request":
+        return <CheckCircleOutlined style={{ color: "#faad14" }} />;
       default:
-        return <BellOutlined style={{ color: '#722ed1' }} />;
+        return <BellOutlined style={{ color: "#722ed1" }} />;
     }
   };
 
   const tabItems = [
     {
-      key: 'all',
+      key: "all",
       label: (
         <Badge count={notifications.length} offset={[10, 0]}>
           全部
@@ -100,7 +105,7 @@ const Notifications: React.FC = () => {
       ),
     },
     {
-      key: 'unread',
+      key: "unread",
       label: (
         <Badge count={unreadCount} offset={[10, 0]}>
           未读
@@ -108,20 +113,20 @@ const Notifications: React.FC = () => {
       ),
     },
     {
-      key: 'status',
-      label: '状态',
+      key: "status",
+      label: "状态",
     },
     {
-      key: 'message',
-      label: '消息',
+      key: "message",
+      label: "消息",
     },
     {
-      key: 'request',
-      label: '请求',
+      key: "request",
+      label: "请求",
     },
     {
-      key: 'system',
-      label: '系统',
+      key: "system",
+      label: "系统",
     },
   ];
 
@@ -138,7 +143,11 @@ const Notifications: React.FC = () => {
           </div>
         }
         extra={
-          <Button type="link" onClick={handleReadAll} disabled={unreadCount === 0}>
+          <Button
+            type="link"
+            onClick={handleReadAll}
+            disabled={unreadCount === 0}
+          >
             全部已读
           </Button>
         }
@@ -146,10 +155,10 @@ const Notifications: React.FC = () => {
         <Tabs activeKey={activeTab} onChange={setActiveTab} items={tabItems} />
         <List
           dataSource={filteredNotifications}
-          locale={{ emptyText: '暂无通知' }}
+          locale={{ emptyText: "暂无通知" }}
           renderItem={(item) => (
             <List.Item
-              className={`cursor-pointer hover:bg-gray-50 ${!item.read ? 'bg-blue-50' : ''}`}
+              className={`cursor-pointer hover:bg-gray-50 ${!item.read ? "bg-blue-50" : ""}`}
               onClick={() => handleRead(item.id)}
             >
               <List.Item.Meta
@@ -164,9 +173,7 @@ const Notifications: React.FC = () => {
                   </div>
                 }
               />
-              {!item.read && (
-                <Badge dot color="blue" />
-              )}
+              {!item.read && <Badge dot color="blue" />}
             </List.Item>
           )}
         />

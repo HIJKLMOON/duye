@@ -1,5 +1,5 @@
-import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import type { User, MenuItem } from '../../types';
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import type { User, MenuItem } from "../../types";
 
 interface AuthState {
   token: string | null;
@@ -10,21 +10,21 @@ interface AuthState {
 }
 
 const initialState: AuthState = {
-  token: localStorage.getItem('token') || null,
+  token: localStorage.getItem("token") || null,
   user: null,
   menus: [],
   permissions: [],
-  isLogin: !!localStorage.getItem('token'),
+  isLogin: !!localStorage.getItem("token"),
 };
 
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
     setToken(state, action: PayloadAction<string>) {
       state.token = action.payload;
       state.isLogin = true;
-      localStorage.setItem('token', action.payload);
+      localStorage.setItem("token", action.payload);
     },
     setUser(state, action: PayloadAction<User>) {
       state.user = action.payload;
@@ -35,13 +35,21 @@ const authSlice = createSlice({
     setPermissions(state, action: PayloadAction<string[]>) {
       state.permissions = action.payload;
     },
-    loginSuccess(state, action: PayloadAction<{ token: string; user: User; menus: MenuItem[]; permissions: string[] }>) {
+    loginSuccess(
+      state,
+      action: PayloadAction<{
+        token: string;
+        user: User;
+        menus: MenuItem[];
+        permissions: string[];
+      }>,
+    ) {
       state.token = action.payload.token;
       state.user = action.payload.user;
       state.menus = action.payload.menus;
       state.permissions = action.payload.permissions;
       state.isLogin = true;
-      localStorage.setItem('token', action.payload.token);
+      localStorage.setItem("token", action.payload.token);
     },
     logout(state) {
       state.token = null;
@@ -49,10 +57,17 @@ const authSlice = createSlice({
       state.menus = [];
       state.permissions = [];
       state.isLogin = false;
-      localStorage.removeItem('token');
+      localStorage.removeItem("token");
     },
   },
 });
 
-export const { setToken, setUser, setMenus, setPermissions, loginSuccess, logout } = authSlice.actions;
+export const {
+  setToken,
+  setUser,
+  setMenus,
+  setPermissions,
+  loginSuccess,
+  logout,
+} = authSlice.actions;
 export default authSlice.reducer;

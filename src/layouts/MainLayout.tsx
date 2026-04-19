@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { Layout, Menu, Avatar, Button, Dropdown, Spin } from 'antd';
+import { useState, useEffect } from "react";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { Layout, Menu, Avatar, Button, Dropdown, Spin } from "antd";
 import {
   DashboardOutlined,
   UserOutlined,
@@ -11,10 +11,15 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   DashboardFilled,
-} from '@ant-design/icons';
-import { useAppDispatch, useAppSelector } from '../hooks/useAuth';
-import { setCollapsed, setSelectedKeys, setOpenKeys, setMenuList } from '../store/slices/menuSlice';
-import type { MenuItem } from '../types';
+} from "@ant-design/icons";
+import { useAppDispatch, useAppSelector } from "../hooks/useAuth";
+import {
+  setCollapsed,
+  setSelectedKeys,
+  setOpenKeys,
+  setMenuList,
+} from "../store/slices/menuSlice";
+import type { MenuItem } from "../types";
 
 const { Sider, Header, Content } = Layout;
 
@@ -31,7 +36,9 @@ const MainLayout: React.FC = () => {
   const location = useLocation();
   const dispatch = useAppDispatch();
   const { user, menus, token } = useAppSelector((state) => state.auth);
-  const { collapsed, selectedKeys, openKeys, menuList } = useAppSelector((state) => state.menu);
+  const { collapsed, selectedKeys, openKeys, menuList } = useAppSelector(
+    (state) => state.menu,
+  );
   const [loading, setLoading] = useState(true);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
@@ -39,15 +46,16 @@ const MainLayout: React.FC = () => {
     if (token && menus.length === 0) {
       setLoading(false);
     } else if (!token) {
-      navigate('/login', { replace: true });
+      navigate("/login", { replace: true });
     }
     setLoading(false);
   }, [token, menus, navigate]);
 
   useEffect(() => {
-    const pathSnippets = location.pathname.split('/').filter((i) => i);
-    const selectedKey = pathSnippets.length > 0 ? `/${pathSnippets[0]}` : '/dashboard';
-    const openKey = pathSnippets.length > 1 ? `/${pathSnippets[0]}` : '';
+    const pathSnippets = location.pathname.split("/").filter((i) => i);
+    const selectedKey =
+      pathSnippets.length > 0 ? `/${pathSnippets[0]}` : "/dashboard";
+    const openKey = pathSnippets.length > 1 ? `/${pathSnippets[0]}` : "";
     dispatch(setSelectedKeys([selectedKey]));
     if (openKey) {
       dispatch(setOpenKeys([openKey]));
@@ -73,15 +81,15 @@ const MainLayout: React.FC = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    window.location.href = '/login';
+    localStorage.removeItem("token");
+    window.location.href = "/login";
   };
 
   const defaultMenus: MenuItem[] = [
-    { id: '1', name: '首页', path: '/dashboard', icon: 'DashboardOutlined' },
-    { id: '2', name: '用户管理', path: '/user', icon: 'UserOutlined' },
-    { id: '3', name: '角色管理', path: '/role', icon: 'TeamOutlined' },
-    { id: '4', name: '菜单管理', path: '/menu', icon: 'MenuOutlined' },
+    { id: "1", name: "首页", path: "/dashboard", icon: "DashboardOutlined" },
+    { id: "2", name: "用户管理", path: "/user", icon: "UserOutlined" },
+    { id: "3", name: "角色管理", path: "/role", icon: "TeamOutlined" },
+    { id: "4", name: "菜单管理", path: "/menu", icon: "MenuOutlined" },
   ];
 
   const displayMenus = menuList.length > 0 ? menuList : defaultMenus;
@@ -108,8 +116,13 @@ const MainLayout: React.FC = () => {
 
   return (
     <Layout className="h-screen flex flex-col overflow-hidden">
-      <Header className="bg-white shadow-sm flex items-center px-4 h-14 flex-shrink-0" style={{ zIndex: 100 }}>
-        <div className={`flex items-center ${collapsed ? 'w-20 -ml-4 pl-4' : 'w-60 -ml-4 pl-4'} transition-all`}>
+      <Header
+        className="bg-white shadow-sm flex items-center px-4 h-14 flex-shrink-0"
+        style={{ zIndex: 100 }}
+      >
+        <div
+          className={`flex items-center ${collapsed ? "w-20 -ml-4 pl-4" : "w-60 -ml-4 pl-4"} transition-all`}
+        >
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 flex items-center justify-center bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg">
               <DashboardFilled className="text-white text-lg" />
@@ -140,7 +153,7 @@ const MainLayout: React.FC = () => {
           collapsedWidth={80}
           collapsed={collapsed}
           className="bg-white shadow-md flex flex-col overflow-hidden"
-          style={{ height: 'calc(100vh - 56px)', position: 'relative' }}
+          style={{ height: "calc(100vh - 56px)", position: "relative" }}
         >
           <Menu
             mode="inline"
@@ -160,7 +173,7 @@ const MainLayout: React.FC = () => {
                   <div
                     className="px-4 py-2 hover:bg-gray-50 cursor-pointer flex items-center gap-2"
                     onClick={() => {
-                      navigate('/profile');
+                      navigate("/profile");
                       setUserMenuOpen(false);
                     }}
                   >
@@ -170,7 +183,7 @@ const MainLayout: React.FC = () => {
                   <div
                     className="px-4 py-2 hover:bg-gray-50 cursor-pointer flex items-center gap-2"
                     onClick={() => {
-                      navigate('/settings');
+                      navigate("/settings");
                       setUserMenuOpen(false);
                     }}
                   >
@@ -180,7 +193,7 @@ const MainLayout: React.FC = () => {
                   <div
                     className="px-4 py-2 hover:bg-gray-50 cursor-pointer flex items-center gap-2"
                     onClick={() => {
-                      navigate('/notifications');
+                      navigate("/notifications");
                       setUserMenuOpen(false);
                     }}
                   >
@@ -197,14 +210,21 @@ const MainLayout: React.FC = () => {
                   </div>
                 </div>
               )}
-              trigger={['click']}
+              trigger={["click"]}
               placement="top"
             >
-              <div className={`h-14 flex items-center px-4 cursor-pointer hover:bg-gray-50 ${collapsed ? 'justify-center' : ''}`}>
-                <Avatar src={user?.avatar} icon={!user?.avatar && <UserOutlined />} />
+              <div
+                className={`h-14 flex items-center px-4 cursor-pointer hover:bg-gray-50 ${collapsed ? "justify-center" : ""}`}
+              >
+                <Avatar
+                  src={user?.avatar}
+                  icon={!user?.avatar && <UserOutlined />}
+                />
                 {!collapsed && (
                   <div className="ml-3 flex flex-col">
-                    <span className="text-sm">{user?.nickname || user?.username || '管理员'}</span>
+                    <span className="text-sm">
+                      {user?.nickname || user?.username || "管理员"}
+                    </span>
                     <span className="text-xs text-gray-400">点击展开</span>
                   </div>
                 )}

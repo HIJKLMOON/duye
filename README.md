@@ -1,5 +1,5 @@
 # Description
-React/Axios/Element UI/ECharts/Tailwind CSS/Fetch/TypeScript/Ant Design/Material UI/Vite/Sass/CSS Modules
+React/Axios/ECharts/Tailwind CSS/Fetch/TypeScript/Ant Design/Material UI/Vite/Sass/CSS Modules
 
 # React + TypeScript + Vite
 

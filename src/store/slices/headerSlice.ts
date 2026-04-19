@@ -1,5 +1,5 @@
-import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import type { ReactNode } from 'react';
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import type { ReactNode } from "react";
 
 interface HeaderState {
   extra: ReactNode | null;
@@ -10,7 +10,7 @@ const initialState: HeaderState = {
 };
 
 const headerSlice = createSlice({
-  name: 'header',
+  name: "header",
   initialState,
   reducers: {
     setHeaderExtra(state, action: PayloadAction<ReactNode | null>) {

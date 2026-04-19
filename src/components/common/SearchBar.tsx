@@ -1,6 +1,10 @@
-import { Input, Button } from 'antd';
-import { SearchOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
-import type { ReactNode } from 'react';
+import { Input, Button } from "antd";
+import {
+  SearchOutlined,
+  PlusOutlined,
+  ReloadOutlined,
+} from "@ant-design/icons";
+import type { ReactNode } from "react";
 
 interface SearchBarProps {
   value?: string;
@@ -14,7 +18,7 @@ interface SearchBarProps {
 const SearchBar: React.FC<SearchBarProps> = ({
   value,
   onChange,
-  placeholder = '搜索',
+  placeholder = "搜索",
   onAdd,
   onRefresh,
   extraRight,

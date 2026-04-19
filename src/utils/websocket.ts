@@ -1,11 +1,11 @@
-import { message } from 'antd';
-import type { Notification } from '../types';
+import { message } from "antd";
+import type { Notification } from "../types";
 
 type EventCallback = (data: any) => void;
 
 class WebSocketService {
   private ws: WebSocket | null = null;
-  private url: string = '';
+  private url: string = "";
   private reconnectInterval: number = 3000;
   private reconnectTimer: number | null = null;
   private eventListeners: Map<string, EventCallback[]> = new Map();
@@ -26,23 +26,23 @@ class WebSocketService {
       this.ws = new WebSocket(this.url);
 
       this.ws.onopen = () => {
-        console.log('WebSocket connected');
+        console.log("WebSocket connected");
         this.isConnected = true;
         this.clearReconnectTimer();
         this.flushMessageQueue();
-        this.emitEvent('connect', {});
+        this.emitEvent("connect", {});
       };
 
       this.ws.onclose = () => {
-        console.log('WebSocket disconnected');
+        console.log("WebSocket disconnected");
         this.isConnected = false;
-        this.emitEvent('disconnect', {});
+        this.emitEvent("disconnect", {});
         this.scheduleReconnect();
       };
 
       this.ws.onerror = (error) => {
-        console.error('WebSocket error:', error);
-        this.emitEvent('error', { error });
+        console.error("WebSocket error:", error);
+        this.emitEvent("error", { error });
       };
 
       this.ws.onmessage = (event) => {
@@ -50,11 +50,11 @@ class WebSocketService {
           const data = JSON.parse(event.data);
           this.handleMessage(data);
         } catch (error) {
-          console.error('Failed to parse WebSocket message:', error);
+          console.error("Failed to parse WebSocket message:", error);
         }
       };
     } catch (error) {
-      console.error('Failed to create WebSocket:', error);
+      console.error("Failed to create WebSocket:", error);
       this.scheduleReconnect();
     }
   }
@@ -63,33 +63,33 @@ class WebSocketService {
     const { type, payload } = data;
 
     switch (type) {
-      case 'status_change':
+      case "status_change":
         message.info({
-          content: `用户 ${payload.username} ${payload.status === 'online' ? '上线' : '下线'}`,
+          content: `用户 ${payload.username} ${payload.status === "online" ? "上线" : "下线"}`,
           duration: 3,
         });
-        this.emitEvent('status_change', payload);
+        this.emitEvent("status_change", payload);
         break;
 
-      case 'user_update':
+      case "user_update":
         message.success({
-          content: payload.message || '用户信息已更新',
+          content: payload.message || "用户信息已更新",
           duration: 3,
         });
-        this.emitEvent('user_update', payload);
+        this.emitEvent("user_update", payload);
         break;
 
-      case 'request':
+      case "request":
         message.warning({
-          content: payload.message || '收到新请求',
+          content: payload.message || "收到新请求",
           duration: 3,
         });
-        this.emitEvent('request', payload);
+        this.emitEvent("request", payload);
         break;
 
-      case 'notification':
+      case "notification":
         this.showNotificationMessage(payload);
-        this.emitEvent('notification', payload);
+        this.emitEvent("notification", payload);
         break;
 
       default:
@@ -100,17 +100,17 @@ class WebSocketService {
   private showNotificationMessage(notification: Notification) {
     const config: any = {
       content: notification.content,
-      duration: notification.type === 'system' ? 5 : 3,
+      duration: notification.type === "system" ? 5 : 3,
     };
 
     switch (notification.type) {
-      case 'status':
+      case "status":
         message.info(config);
         break;
-      case 'request':
+      case "request":
         message.warning(config);
         break;
-      case 'system':
+      case "system":
         message.info(config);
         break;
       default:
@@ -151,7 +151,7 @@ class WebSocketService {
     try {
       this.ws.send(JSON.stringify(data));
     } catch (error) {
-      console.error('Failed to send WebSocket message:', error);
+      console.error("Failed to send WebSocket message:", error);
     }
   }
 
@@ -165,12 +165,12 @@ class WebSocketService {
       }
     });
 
-    const allListeners = this.eventListeners.get('*') || [];
+    const allListeners = this.eventListeners.get("*") || [];
     allListeners.forEach((callback) => {
       try {
         callback({ event, data });
       } catch (error) {
-        console.error('Error in wildcard event listener:', error);
+        console.error("Error in wildcard event listener:", error);
       }
     });
   }

@@ -1,5 +1,5 @@
-import { Modal } from 'antd';
-import type { ReactNode } from 'react';
+import { Modal } from "antd";
+import type { ReactNode } from "react";
 
 interface ActionModalProps {
   open: boolean;
@@ -19,7 +19,13 @@ const ActionModal: React.FC<ActionModalProps> = ({
   width = 600,
 }) => {
   return (
-    <Modal title={title} open={open} onOk={onOk} onCancel={onCancel} width={width}>
+    <Modal
+      title={title}
+      open={open}
+      onOk={onOk}
+      onCancel={onCancel}
+      width={width}
+    >
       {children}
     </Modal>
   );

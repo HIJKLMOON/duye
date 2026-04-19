@@ -1,5 +1,5 @@
-import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import type { MenuItem } from '../../types';
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import type { MenuItem } from "../../types";
 
 interface MenuState {
   collapsed: boolean;
@@ -16,7 +16,7 @@ const initialState: MenuState = {
 };
 
 const menuSlice = createSlice({
-  name: 'menu',
+  name: "menu",
   initialState,
   reducers: {
     setCollapsed(state, action: PayloadAction<boolean>) {
@@ -34,5 +34,6 @@ const menuSlice = createSlice({
   },
 });
 
-export const { setCollapsed, setSelectedKeys, setOpenKeys, setMenuList } = menuSlice.actions;
+export const { setCollapsed, setSelectedKeys, setOpenKeys, setMenuList } =
+  menuSlice.actions;
 export default menuSlice.reducer;

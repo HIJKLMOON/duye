@@ -1,19 +1,8 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, type ReactElement } from "react";
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import { Spin } from "antd";
 import MainLayout from "../layouts/MainLayout";
 import AuthLayout from "../layouts/AuthLayout";
-
-const Login = lazy(() => import("../pages/auth/Login"));
-const Dashboard = lazy(() => import("../pages/dashboard/Dashboard"));
-const UserManage = lazy(() => import("../pages/user/UserManage"));
-const RoleManage = lazy(() => import("../pages/role/RoleManage"));
-const MenuManage = lazy(() => import("../pages/menu/MenuManage"));
-const Settings = lazy(() => import("../pages/settings/Settings"));
-const Profile = lazy(() => import("../pages/profile/Profile"));
-const Notifications = lazy(
-  () => import("../pages/notifications/Notifications"),
-);
 
 const Loading = () => (
   <div className="flex items-center justify-center h-screen">
@@ -21,7 +10,18 @@ const Loading = () => (
   </div>
 );
 
-const router = createBrowserRouter([
+const lazyLoad = (
+  importFn: () => Promise<{ default: React.ComponentType<any> }>,
+): ReactElement => {
+  const Component = lazy(importFn);
+  return (
+    <Suspense fallback={<Loading />}>
+      <Component />
+    </Suspense>
+  );
+};
+
+export const router = createBrowserRouter([
   {
     path: "/",
     element: <Navigate to="/dashboard" replace />,
@@ -32,7 +32,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Login />,
+        element: lazyLoad(() => import("../pages/auth/Login")),
       },
     ],
   },
@@ -46,59 +46,31 @@ const router = createBrowserRouter([
       },
       {
         path: "dashboard",
-        element: (
-          <Suspense fallback={<Loading />}>
-            <Dashboard />
-          </Suspense>
-        ),
+        element: lazyLoad(() => import("../pages/dashboard/Dashboard")),
       },
       {
         path: "user",
-        element: (
-          <Suspense fallback={<Loading />}>
-            <UserManage />
-          </Suspense>
-        ),
+        element: lazyLoad(() => import("../pages/user/UserManage")),
       },
       {
         path: "role",
-        element: (
-          <Suspense fallback={<Loading />}>
-            <RoleManage />
-          </Suspense>
-        ),
+        element: lazyLoad(() => import("../pages/role/RoleManage")),
       },
       {
         path: "menu",
-        element: (
-          <Suspense fallback={<Loading />}>
-            <MenuManage />
-          </Suspense>
-        ),
+        element: lazyLoad(() => import("../pages/menu/MenuManage")),
       },
       {
         path: "settings",
-        element: (
-          <Suspense fallback={<Loading />}>
-            <Settings />
-          </Suspense>
-        ),
+        element: lazyLoad(() => import("../pages/settings/Settings")),
       },
       {
         path: "profile",
-        element: (
-          <Suspense fallback={<Loading />}>
-            <Profile />
-          </Suspense>
-        ),
+        element: lazyLoad(() => import("../pages/profile/Profile")),
       },
       {
         path: "notifications",
-        element: (
-          <Suspense fallback={<Loading />}>
-            <Notifications />
-          </Suspense>
-        ),
+        element: lazyLoad(() => import("../pages/notifications/Notifications")),
       },
     ],
   },

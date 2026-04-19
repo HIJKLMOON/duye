@@ -7,7 +7,7 @@ export interface User {
   phone?: string;
   roleIds?: string[];
   status?: number;
-  onlineStatus?: 'online' | 'offline';
+  onlineStatus?: "online" | "offline";
   createTime?: string;
   updateTime?: string;
 }
@@ -15,7 +15,7 @@ export interface User {
 export interface Notification {
   id: string;
   userId?: string;
-  type: 'status' | 'message' | 'request' | 'system';
+  type: "status" | "message" | "request" | "system";
   title: string;
   content: string;
   read?: boolean;
@@ -79,8 +79,8 @@ export interface TableColumn {
   dataIndex: string;
   key?: string;
   width?: number;
-  align?: 'left' | 'center' | 'right';
-  fixed?: 'left' | 'right';
+  align?: "left" | "center" | "right";
+  fixed?: "left" | "right";
   render?: (value: any, record: any, index: number) => React.ReactNode;
   ellipsis?: boolean;
 }
@@ -88,11 +88,22 @@ export interface TableColumn {
 export interface FormItem {
   name: string;
   label: string;
-  type: 'input' | 'select' | 'date' | 'datetime' | 'textarea' | 'password' | 'number' | 'switch' | 'radio' | 'checkbox' | 'upload';
+  type:
+    | "input"
+    | "select"
+    | "date"
+    | "datetime"
+    | "textarea"
+    | "password"
+    | "number"
+    | "switch"
+    | "radio"
+    | "checkbox"
+    | "upload";
   rules?: any[];
   placeholder?: string;
   options?: { label: string; value: any }[];
   disabled?: boolean;
   showSearch?: boolean;
-  mode?: 'multiple' | 'tags';
+  mode?: "multiple" | "tags";
 }
