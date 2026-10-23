@@ -119,11 +119,11 @@ export const request = {
   },
 };
 
-export { authApi } from './modules/auth';
-export { userApi } from './modules/user';
-export { roleApi } from './modules/role';
-export { menuApi } from './modules/menu';
-export { notificationApi } from './modules/notification';
-export { uploadApi } from './modules/upload';
+export { authApi } from "./modules/auth";
+export { userApi } from "./modules/user";
+export { roleApi } from "./modules/role";
+export { menuApi } from "./modules/menu";
+export { notificationApi } from "./modules/notification";
+export { uploadApi } from "./modules/upload";
 
 export default axiosInstance;
